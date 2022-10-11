@@ -18,7 +18,7 @@ RSpec.describe Isometric::DbConnection do
               username: 'username',
               password: 'password',
               database: 'password' })
-    described_class.connect!(isometric_lookup: Isometric::DEFAULT_DATABASE_KEY)
+    described_class.from_configuration(isometric_lookup: Isometric::DEFAULT_DATABASE_KEY)
   end
 
   it 'uses the config from the Isometric::Config config with a custom key' do
@@ -36,6 +36,6 @@ RSpec.describe Isometric::DbConnection do
               username: 'username2',
               password: 'password2',
               database: 'password2' })
-    described_class.connect!(isometric_lookup: 'custom_key')
+    described_class.from_configuration(isometric_lookup: 'custom_key')
   end
 end

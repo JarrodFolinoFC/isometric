@@ -33,6 +33,7 @@
   factories/logger
 
   response/response
+  schema/schema_summary
 
   citations/citation
 ].each do |lib|

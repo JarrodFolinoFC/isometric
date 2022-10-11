@@ -1,0 +1,25 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Person",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Unique Identifier"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "The person's first name."
+    },
+    "middleName": {
+      "type": "string",
+      "description": "The person's middle name."
+    },
+    "lastName": {
+      "type": "string",
+      "description": "The person's last name."
+    }
+  },
+  "required": ["firstName", "lastName"]
+}

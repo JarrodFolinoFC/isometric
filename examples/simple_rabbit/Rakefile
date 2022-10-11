@@ -11,7 +11,7 @@ namespace :db do
   desc 'DB Connect'
   task :connect do
     require_relative 'config/db'
-    Isometric::DbConnection.connect!(isometric_lookup: Isometric::DEFAULT_DATABASE_KEY)
+    Isometric::DbConnection.from_convention
   end
 
   desc 'Migrate DB'
@@ -31,9 +31,9 @@ namespace :run do
   task create_listener: 'db:connect' do
     Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_create',
                                              isometric_lookup: 'default/rabbit/listener_attributes').listen do |payload|
-      sporting_events = Isometric::ActiveModelHelper.build_all(Person, JSON.parse(payload))
-      sporting_events.map(&:save!)
-      Isometric::Logger.instance.debug("#{sporting_events.size} SportingEvent objects created")
+      people = Isometric::ActiveModelHelper.build_all(Person, JSON.parse(payload))
+      people.map(&:save!)
+      Isometric::Logger.instance.debug("#{people.size} SportingEvent objects created")
     end
   end
 
@@ -48,7 +48,7 @@ namespace :run do
   desc 'Run Person Callback Listener'
   task callback_listener: 'db:connect' do
     Isometric::EventListenerFactory.instance(
-      queue_name: 'sporting_event_callback',
+      queue_name: 'person_callback',
       isometric_lookup: 'default/rabbit/listener_attributes'
     ).listen do |payload|
       puts payload
@@ -72,11 +72,11 @@ task :publish, [:internal_id] do |_t, args|
   publisher_class.instance('sporting_event_create').publish { data }
 end
 
-desc 'Clean Person'
+desc 'Clean DB and Queues'
 task clean: 'db:connect' do
   Isometric::QueueManagerFactory.instance.purge_all(%w[sporting_event sporting_event_created sporting_event_created])
   Person.delete_all
-  Isometric::OutboxMessage.delete_all
+  # Isometric::OutboxMessage.delete_all
 end
 
 desc 'Person Summary'

@@ -12,8 +12,9 @@ end
 
 require_relative '../models/person'
 
-Isometric::DbConnection.connect_with_default!
+Isometric::DbConnection.from_convention
 Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'http://localhost:4567')
+SCHEMAS = Isometric::SchemaSummary.from_convention("#{__dir__}/../schemas")
 
 module API
   class Person < Grape::API
