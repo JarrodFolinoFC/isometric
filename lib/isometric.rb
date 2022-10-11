@@ -13,7 +13,7 @@
 
   asynchronous/base_event_listener
   asynchronous/rabbitmq/event_listener
-  asynchronous/rabbitmq/rabbit_publisher
+  asynchronous/rabbitmq/rabbit_json_publisher
   asynchronous/rabbitmq/queue_manager
   asynchronous/rabbitmq/default_rabbit_message_headers
   asynchronous/rabbitmq/factories/bunny_connection_factory
@@ -31,6 +31,8 @@
 
   factories/db_connection
   factories/logger
+
+  response/response
 
   citations/citation
 ].each do |lib|

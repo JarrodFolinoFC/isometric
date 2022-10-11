@@ -17,6 +17,8 @@ Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'ht
 
 module API
   class Person < Grape::API
+    QUEUE_CONFIG_REFERENCE = Isometric::Config.instance['person_queues']
+
     version 'v1', using: :header, vendor: 'acme'
     format :json
     prefix :api
@@ -39,53 +41,55 @@ module API
 
       desc 'Create a person.'
       params do
-        requires :first_name, type: String, desc: 'First Name.'
-        requires :last_name, type: String, desc: 'Last Name.'
+        [
+          { name: :first_name, type: String, desc: '' },
+          { name: :last_name, type: String, desc: '' }
+        ].each do |e|
+          requires(e[:name], type: e[:type], desc: e[:desc])
+        end
       end
       post do
-        corr_id = ::Isometric::PublisherFactory.instance(
-          queue_name: Isometric::Config.instance['person_queues'][:create],
-          isometric_lookup: Isometric::DEFAULT_BUNNY_PUBLISH_KEY).publish do
-          {
-            first_name: params[:first_name],
-            last_name: params[:last_name]
-          }.to_json
+        queue_name = Isometric::Config.instance['person_queues'][:create]
+        corr_id = ::Isometric::PublisherFactory.from_convention(
+          queue_name: queue_name
+        ).publish do
+          { first_name: params[:first_name], last_name: params[:last_name] }
         end
-        { correlation_id: corr_id }
+        Isometric::Response.render_response(corr_id)
       end
 
       desc 'Update a person.'
       params do
-        requires :uuid, type: String, desc: 'UUID.'
-        requires :first_name, type: String, desc: 'First Name.'
-        requires :last_name, type: String, desc: 'Last Name.'
+        [
+          { name: :uuid, type: String, desc: '' },
+          { name: :first_name, type: String, desc: '' },
+          { name: :last_name, type: String, desc: '' }
+        ].each do |e|
+          requires(e[:name], type: e[:type], desc: e[:desc])
+        end
         optional :middle_name, type: String, desc: 'Middle Name.'
       end
       put do
-        corr_id = Isometric::PublisherFactory.instance(
-            queue_name: Isometric::Config.instance['person_queues'][:update],
-            isometric_lookup: Isometric::DEFAULT_BUNNY_PUBLISH_KEY).publish do
+        queue_name = Isometric::Config.instance['person_queues'][:update]
+        corr_id = Isometric::PublisherFactory.from_convention(queue_name: queue_name).publish do
           {
-            uuid: params[:uuid], first_name: params[:first_name],
-            last_name: params[:last_name]
-          }.to_json
+            uuid: params[:uuid], first_name: params[:first_name], last_name: params[:last_name]
+          }
         end
-        { correlation_id: corr_id }
+        Isometric::Response.render_response(corr_id)
       end
 
       desc 'Delete a person.'
       params do
-        requires :uuid, type: String, desc: 'UUID.'
+        [{ name: :uuid, type: String, desc: '' }].each do |e|
+          requires(e[:name], type: e[:type], desc: e[:desc])
+        end
       end
       post ':uuid' do
-        corr_id = Isometric::PublisherFactory.instance(
-            queue_name: Isometric::Config.instance['person_queues'][:delete],
-            isometric_lookup: Isometric::DEFAULT_BUNNY_PUBLISH_KEY).publish do
-          {
-            uuid: params[:uuid]
-          }.to_json
-        end
-        { correlation_id: corr_id }
+        queue_name = Isometric::Config.instance['person_queues'][:delete]
+        factory = Isometric::PublisherFactory.from_convention(queue_name: queue_name)
+        corr_id = factory.publish { { uuid: params[:uuid] } }
+        Isometric::Response.render_response(corr_id)
       end
     end
   end

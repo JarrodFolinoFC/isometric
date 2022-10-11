@@ -3,7 +3,7 @@
 require 'json'
 
 module Isometric
-  class RabbitPublisher
+  class RabbitJsonPublisher
     DEFAULT_EXCHANGE_NAME = 'direct_name'
 
     attr_reader :channel, :exchange, :exchange_name, :queue_name, :settings
@@ -19,6 +19,7 @@ module Isometric
     def publish
       evaluated_hash = Isometric::Config.evaluate_hash(@settings)
       payload = yield
+      payload = payload.to_json unless payload.class == String
       exchange.publish(payload, evaluated_hash)
       nil
     end

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Isometric::RabbitPublisher do
+RSpec.describe Isometric::RabbitJsonPublisher do
   describe 'initialize' do
     before do
       @instance = described_class.new('queue_name', nil, nil)

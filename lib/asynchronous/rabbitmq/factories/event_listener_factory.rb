@@ -7,7 +7,7 @@ module Isometric
       isometic_lookup_settings = Isometric::Config.instance[isometric_lookup]
       settings = isometic_lookup_settings.merge(settings) if isometic_lookup_settings
       @instances = {} if @instances.nil?
-      conn = BunnyConnectionFactory.conn(isometric_lookup: Isometric::DEFAULT_BUNNY_CONNECTION_KEY)
+      conn = BunnyConnectionFactory.from_convention
       conn.start
       ch = conn.create_channel
       queue = ch.queue(queue_name, auto_delete: true)

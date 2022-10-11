@@ -19,5 +19,9 @@ module Isometric
       @connections << bunny
       bunny
     end
+
+    def self.from_convention
+      conn(isometric_lookup: Isometric::DEFAULT_BUNNY_CONNECTION_KEY)
+    end
   end
 end

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'json'
-require 'factory_bot'
 
 require_relative '../../config/queues'
 require_relative '../../listeners/person/created'
@@ -10,10 +8,9 @@ require_relative '../../listeners/person/deleted'
 require_relative '../../listeners/person/updated'
 
 def listener_af(listener, channel)
-  Isometric::EventListenerFactory.instance(queue_name: channel,
+  Isometric::EventListenerFactory.instance(queue_name: Isometric::Config.instance['person_queues'][channel],
                                            klass: listener,
-                                           settings: { after_hooks: [Isometric::RabbitHooks::CLOSE_CHANNEL] }
-  )
+                                           settings: { after_hooks: [Isometric::RabbitHooks::CLOSE_CHANNEL] })
 end
 
 RSpec.describe 'simple flow' do
@@ -46,14 +43,11 @@ RSpec.describe 'simple flow' do
     end
   end
 
-  describe 'POST /api/persons', type: ['rabbitmq', 'activerecord'] do
-    let(:person_created_listener) {
-      listener_af(Listener::Person::Created, Isometric::Config.instance['person_queues'][:create])
-    }
+  describe 'POST /api/persons', type: %w[rabbitmq activerecord] do
+    let(:person_created_listener) { listener_af(Listener::Person::Created, :create) }
 
     before do
-      post('/api/person', { 'last_name' => 'Jones',
-                            'first_name' => 'Jon'})
+      post('/api/person', { 'last_name' => 'Jones', 'first_name' => 'Jon' })
       person_created_listener.call
     end
 
@@ -62,16 +56,12 @@ RSpec.describe 'simple flow' do
     end
   end
 
-  describe 'PUT /api/person', type: ['rabbitmq', 'activerecord'] do
-    let(:person_update_listener) {
-      listener_af(Listener::Person::Updated,
-                  Isometric::Config.instance['person_queues'][:update])
-    }
+  describe 'PUT /api/person', type: %w[rabbitmq activerecord] do
+    let(:person_update_listener) { listener_af(Listener::Person::Updated, :update) }
 
     before do
       Person.create(params)
-      put('/api/person', { 'uuid' => 'ewefrgweg3rethg34rty', 'last_name' => 'Jones',
-                           'first_name' => 'Jon'})
+      put('/api/person', { 'uuid' => 'ewefrgweg3rethg34rty', 'last_name' => 'Jones', 'first_name' => 'Jon' })
       person_update_listener.call
     end
 
@@ -80,13 +70,8 @@ RSpec.describe 'simple flow' do
     end
   end
 
-  describe 'DELETE /api/person/delete', type: ['rabbitmq', 'activerecord'] do
-    let(:person_delete_listener) {
-      puts 'Isometric::Config.instance.inspect'
-      puts Isometric::Config.instance.inspect
-      listener_af(Listener::Person::Deleted,
-                  Isometric::Config.instance['person_queues'][:delete])
-    }
+  describe 'DELETE /api/person/delete', type: %w[rabbitmq activerecord] do
+    let(:person_delete_listener) { listener_af(Listener::Person::Deleted, :delete) }
 
     before do
       Person.create(params)

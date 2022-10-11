@@ -4,17 +4,22 @@
   "title": "Person",
   "type": "object",
   "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Unique Identifier"
+    },
     "firstName": {
       "type": "string",
       "description": "The person's first name."
     },
     "middleName": {
-      "description": "The person's middle name.",
-      "type": "string"
+      "type": "string",
+      "description": "The person's middle name."
     },
     "lastName": {
       "type": "string",
       "description": "The person's last name."
     }
-  }
+  },
+  "required": ["firstName", "lastName"]
 }

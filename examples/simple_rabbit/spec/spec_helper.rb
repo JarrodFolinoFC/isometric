@@ -17,7 +17,6 @@ def app
   @app ||= Rack::Builder.parse_file("#{__dir__}/../api/config.ru")
 end
 
-
 DatabaseCleaner.strategy = :truncation
 
 RSpec.configure do |c|

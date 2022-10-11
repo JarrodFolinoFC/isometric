@@ -30,7 +30,7 @@ namespace :run do
   desc 'Run Create Person Listener'
   task create_listener: 'db:connect' do
     Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_create',
-      isometric_lookup: 'default/rabbit/listener_attributes').listen do |payload|
+                                             isometric_lookup: 'default/rabbit/listener_attributes').listen do |payload|
       sporting_events = Isometric::ActiveModelHelper.build_all(Person, JSON.parse(payload))
       sporting_events.map(&:save!)
       Isometric::Logger.instance.debug("#{sporting_events.size} SportingEvent objects created")
@@ -47,8 +47,12 @@ namespace :run do
 
   desc 'Run Person Callback Listener'
   task callback_listener: 'db:connect' do
-    Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_callback',
-                                             isometric_lookup: 'default/rabbit/listener_attributes').listen { |payload| puts payload }
+    Isometric::EventListenerFactory.instance(
+      queue_name: 'sporting_event_callback',
+      isometric_lookup: 'default/rabbit/listener_attributes'
+    ).listen do |payload|
+      puts payload
+    end
   end
 end
 
@@ -94,7 +98,6 @@ task summary: 'db:connect' do
   #{Isometric::OutboxMessage.where(last_published_at: nil).last&.headers}
   " ''
 end
-
 
 # desc 'Run Reply Listener'
 # task :reply_listener do
