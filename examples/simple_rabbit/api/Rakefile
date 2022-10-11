@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+require_relative 'root'
+
+desc 'Print out routes'
+task :routes do
+  SportingEvent::API.routes.each do |route|
+    info = route.instance_variable_get :@options
+    description = format('%-40s', info[:description][0..39])
+    method = format('%-7s', info[:method])
+    puts "#{description}\t#{method}\t#{info[:prefix]}#{info[:namespace]}"
+  end
+end

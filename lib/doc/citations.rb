@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+Citation.create(:polling_publisher, [])
+Citation.create(:transactional_outbox, [])
+Citation.create(:transactional_inbox, [])
+Citation.create(:transaction_log_tailing, [])
+Citation.create(:circuit_breaker, [])
+Citation.create(:messaging, [])
+Citation.create(:rest_api, [])
+Citation.create(:self_registration, [])
+Citation.create(:swagger, [])
+Citation.create(:reply_channel, [])
+Citation.create(:point_to_point_channel, [])
+Citation.create(:message_broker, [])
+Citation.create(:AMQP, [])
+Citation.create(:STOMP, [])
+Citation.create(:idempotent_message_handler, [])

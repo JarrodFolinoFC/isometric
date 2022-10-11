@@ -1,0 +1,239 @@
+{
+  "info": {
+    "title": "Horses and Hussars",
+    "description": "Demo app for dev of grape swagger 2.0",
+    "version": "0.0.1"
+  },
+  "swagger": "2.0",
+  "produces": [
+    "application/json"
+  ],
+  "host": "localhost:9292",
+  "tags": [
+    {
+      "name": "sporting_event",
+      "description": "Operations about sporting_events"
+    },
+    {
+      "name": "sporting_events",
+      "description": "Operations about sporting_events"
+    },
+    {
+      "name": "swagger_doc",
+      "description": "Operations about swagger_docs"
+    }
+  ],
+  "paths": {
+    "/api/sporting_event/{internal_id}": {
+      "get": {
+        "description": "Return a sporting event.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "internal_id",
+            "description": "Status ID.",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return a sporting event."
+          }
+        },
+        "tags": [
+          "sporting_event"
+        ],
+        "operationId": "getApiSportingEventInternalId"
+      }
+    },
+    "/api/sporting_event/{id}": {
+      "delete": {
+        "description": "Delete a sporting event.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Status ID.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a sporting event."
+          }
+        },
+        "tags": [
+          "sporting_event"
+        ],
+        "operationId": "deleteApiSportingEventId"
+      }
+    },
+    "/api/sporting_event": {
+      "put": {
+        "description": "Update a sporting event.",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "id",
+            "description": "Status ID.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "status",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update a sporting event."
+          }
+        },
+        "tags": [
+          "sporting_event"
+        ],
+        "operationId": "putApiSportingEvent"
+      },
+      "post": {
+        "description": "Create a sporting event.",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "internal_id",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "event_date",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "venue",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "location",
+            "description": "Your status.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Create a sporting event."
+          }
+        },
+        "tags": [
+          "sporting_event"
+        ],
+        "operationId": "postApiSportingEvent"
+      }
+    },
+    "/api/sporting_events": {
+      "get": {
+        "description": "Return all sporting events.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return all sporting events."
+          }
+        },
+        "tags": [
+          "sporting_events"
+        ],
+        "operationId": "getApiSportingEvents"
+      }
+    },
+    "/swagger_doc/{name}": {
+      "get": {
+        "description": "Swagger compatible API description for specific API",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Resource name of mounted API",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "locale",
+            "description": "Locale of API documentation",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Swagger compatible API description for specific API"
+          }
+        },
+        "tags": [
+          "swagger_doc"
+        ],
+        "operationId": "getSwaggerDocName"
+      }
+    },
+    "/swagger_doc": {
+      "get": {
+        "description": "Swagger compatible API description",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Swagger compatible API description"
+          }
+        },
+        "tags": [
+          "swagger_doc"
+        ],
+        "operationId": "getSwaggerDoc"
+      }
+    }
+  }
+}

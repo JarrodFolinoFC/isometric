@@ -1,0 +1,119 @@
+# frozen_string_literal: true
+
+require 'rake'
+require '../../lib/isometric'
+
+require_relative 'models/sporting_event'
+require_relative 'lib/csv_reader'
+
+Dir['config/*.rb'].each { |file| require_relative file }
+
+namespace :db do
+  desc 'DB Connect'
+  task :connect do
+    require_relative 'config/db'
+    Isometric::DbConnection.connect!(isometric_lookup: Isometric::DEFAULT_DATABASE_KEY)
+  end
+
+  desc 'Migrate DB'
+  task migrate: 'db:connect' do
+    require_relative 'db/migrate/migration_one'
+    require_relative 'db/migrate/db_outbox'
+  end
+end
+
+namespace :run do
+  desc 'Run API'
+  task :api do
+    ruby 'rackup api/config.ru'
+  end
+
+  desc 'Run Create Sporting Event Listener'
+  task create_listener: 'db:connect' do
+    Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_create',
+      isometric_lookup: 'default/rabbit/listener_attributes').listen do |payload|
+      sporting_events = Isometric::ActiveModelHelper.build_all(SportingEvent, JSON.parse(payload))
+      sporting_events.map(&:save!)
+      Isometric::Logger.instance.debug("#{sporting_events.size} SportingEvent objects created")
+    end
+  end
+
+  desc 'Run Update Sporting Event Listener'
+  task update_listener: 'db:connect' do
+  end
+
+  desc 'Run Delete Sporting Event Listener'
+  task delete_listener: 'db:connect' do
+  end
+
+  desc 'Run Sporting Event Callback Listener'
+  task callback_listener: 'db:connect' do
+    Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_callback',
+                                             isometric_lookup: 'default/rabbit/listener_attributes').listen { |payload| puts payload }
+  end
+end
+
+desc 'Publish All Sporting Events'
+task :publish_all, [:publisher_class] => 'db:connect' do |_t, args|
+  args.with_defaults(publisher_class: 'Isometric::PublisherFactory')
+  publisher_class = Object.const_get(args[:publisher_class])
+  publisher_class.instance('sporting_event_create').publish { CsvReader.parse_csv('data.csv') }
+end
+
+desc 'Publish Single Sporting Event'
+task :publish, [:internal_id] do |_t, args|
+  args.with_defaults(publisher_class: 'Isometric::PublisherFactory')
+  internal_id = args[:internal_id]
+  publisher_class = Object.const_get(args[:publisher_class])
+  data = JSON.parse(CsvReader.parse_csv('data.csv')).select { |obj| obj['internal_id'] == internal_id }.to_json
+  publisher_class.instance('sporting_event_create').publish { data }
+end
+
+# desc 'Run Reply Listener'
+# task :reply_listener do
+#   reply_topic = Isometric::Config.instance['default/rabbit/publish_attributes'][:reply_to]
+#   Isometric::EventListenerFactory.instance('reply_queue').listen do |payload|
+#     puts payload
+#   end
+# end
+#
+# desc 'Run DB Reply Listener'
+# task :db_reply_listener do
+#   Isometric::EventListenerFactory.instance('reply_to').listen do |payload|
+#     Isometric::OutboxMessage.ack!(payload[:correlation_id],
+#                                   payload[:application_name],
+#                                   payload[:message])
+#   end
+# end
+
+#
+# desc 'Run Polling Publisher'
+# task outbox_poller: 'db:connect' do
+#   Isometric::OutboxPollerFactory.instance('queuename')
+# end
+desc 'Clean Sporting Event'
+task clean: 'db:connect' do
+  Isometric::QueueManagerFactory.instance.purge_all(%w[sporting_event sporting_event_created sporting_event_created])
+  SportingEvent.delete_all
+  Isometric::OutboxMessage.delete_all
+end
+
+desc 'Sporting Event Summary'
+task summary: 'db:connect' do
+  puts '' "
+  Discovery Summary
+  #{Isometric::Discovery::Registry.new(Redis.new).summary('app/')}
+  " ''
+
+  puts '' "
+  SportingEvent
+  count #{SportingEvent.count}
+
+  Isometric::OutboxMessage
+  sent count #{Isometric::OutboxMessage.where.not(last_published_at: nil).count}
+  unsent count #{Isometric::OutboxMessage.where(last_published_at: nil).count}
+
+  Last Unsent Headers
+  #{Isometric::OutboxMessage.where(last_published_at: nil).last&.headers}
+  " ''
+end
