@@ -35,7 +35,7 @@ end
 
 RSpec.configure do |c|
   c.around(:each, type: :rabbitmq) do |example|
-    Timeout.timeout(10) do
+    Timeout.timeout(ENV['SPEC_TIMEOUT']&.to_i || 10) do
       example.run
     end
     ::Isometric::BunnyConnectionFactory.connections.each(&:close)

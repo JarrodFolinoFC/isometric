@@ -3,13 +3,13 @@
 require 'json'
 
 module Listener
-  module SportingEvent
+  module Person
     class Deleted < ::Isometric::BaseEventListener
       def listen(_delivery_info, _metadata, payload)
         Isometric::Logger.instance.debug("#{self.class} called")
-        internal_id = JSON.parse(payload)['internal_id']
-        ::SportingEvent.find_by(internal_id: internal_id).delete
-        Isometric::Logger.instance.debug("SportingEvent internal_id: #{internal_id} deleted")
+        uuid = JSON.parse(payload)['uuid']
+        ::Person.find_by(uuid: uuid).delete
+        Isometric::Logger.instance.debug("Person uuid: #{uuid} deleted")
       end
     end
   end

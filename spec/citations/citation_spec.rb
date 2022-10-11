@@ -14,7 +14,7 @@ RSpec.describe Citation do
   end
 
   it 'sets the root' do
-    expect(Citation.root).to eq('/Users/jarrod.folino/Dev/research/myarch/libs/isometric/spec/citations')
+    expect(Citation.root).to match('isometric/spec/citations')
   end
 
   it 'adds to the encyclopedia' do

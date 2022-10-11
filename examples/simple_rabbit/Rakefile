@@ -3,8 +3,7 @@
 require 'rake'
 require '../../lib/isometric'
 
-require_relative 'models/sporting_event'
-require_relative 'lib/csv_reader'
+require_relative 'models/person'
 
 Dir['config/*.rb'].each { |file| require_relative file }
 
@@ -28,39 +27,39 @@ namespace :run do
     ruby 'rackup api/config.ru'
   end
 
-  desc 'Run Create Sporting Event Listener'
+  desc 'Run Create Person Listener'
   task create_listener: 'db:connect' do
     Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_create',
       isometric_lookup: 'default/rabbit/listener_attributes').listen do |payload|
-      sporting_events = Isometric::ActiveModelHelper.build_all(SportingEvent, JSON.parse(payload))
+      sporting_events = Isometric::ActiveModelHelper.build_all(Person, JSON.parse(payload))
       sporting_events.map(&:save!)
       Isometric::Logger.instance.debug("#{sporting_events.size} SportingEvent objects created")
     end
   end
 
-  desc 'Run Update Sporting Event Listener'
+  desc 'Run Update Person Listener'
   task update_listener: 'db:connect' do
   end
 
-  desc 'Run Delete Sporting Event Listener'
+  desc 'Run Delete Person Listener'
   task delete_listener: 'db:connect' do
   end
 
-  desc 'Run Sporting Event Callback Listener'
+  desc 'Run Person Callback Listener'
   task callback_listener: 'db:connect' do
     Isometric::EventListenerFactory.instance(queue_name: 'sporting_event_callback',
                                              isometric_lookup: 'default/rabbit/listener_attributes').listen { |payload| puts payload }
   end
 end
 
-desc 'Publish All Sporting Events'
+desc 'Publish All Person'
 task :publish_all, [:publisher_class] => 'db:connect' do |_t, args|
   args.with_defaults(publisher_class: 'Isometric::PublisherFactory')
   publisher_class = Object.const_get(args[:publisher_class])
   publisher_class.instance('sporting_event_create').publish { CsvReader.parse_csv('data.csv') }
 end
 
-desc 'Publish Single Sporting Event'
+desc 'Publish Single Person'
 task :publish, [:internal_id] do |_t, args|
   args.with_defaults(publisher_class: 'Isometric::PublisherFactory')
   internal_id = args[:internal_id]
@@ -68,6 +67,34 @@ task :publish, [:internal_id] do |_t, args|
   data = JSON.parse(CsvReader.parse_csv('data.csv')).select { |obj| obj['internal_id'] == internal_id }.to_json
   publisher_class.instance('sporting_event_create').publish { data }
 end
+
+desc 'Clean Person'
+task clean: 'db:connect' do
+  Isometric::QueueManagerFactory.instance.purge_all(%w[sporting_event sporting_event_created sporting_event_created])
+  Person.delete_all
+  Isometric::OutboxMessage.delete_all
+end
+
+desc 'Person Summary'
+task summary: 'db:connect' do
+  puts '' "
+  Discovery Summary
+  #{Isometric::Discovery::Registry.new(Redis.new).summary('app/')}
+  " ''
+
+  puts '' "
+  Person
+  count #{Person.count}
+
+  Isometric::OutboxMessage
+  sent count #{Isometric::OutboxMessage.where.not(last_published_at: nil).count}
+  unsent count #{Isometric::OutboxMessage.where(last_published_at: nil).count}
+
+  Last Unsent Headers
+  #{Isometric::OutboxMessage.where(last_published_at: nil).last&.headers}
+  " ''
+end
+
 
 # desc 'Run Reply Listener'
 # task :reply_listener do
@@ -91,29 +118,3 @@ end
 # task outbox_poller: 'db:connect' do
 #   Isometric::OutboxPollerFactory.instance('queuename')
 # end
-desc 'Clean Sporting Event'
-task clean: 'db:connect' do
-  Isometric::QueueManagerFactory.instance.purge_all(%w[sporting_event sporting_event_created sporting_event_created])
-  SportingEvent.delete_all
-  Isometric::OutboxMessage.delete_all
-end
-
-desc 'Sporting Event Summary'
-task summary: 'db:connect' do
-  puts '' "
-  Discovery Summary
-  #{Isometric::Discovery::Registry.new(Redis.new).summary('app/')}
-  " ''
-
-  puts '' "
-  SportingEvent
-  count #{SportingEvent.count}
-
-  Isometric::OutboxMessage
-  sent count #{Isometric::OutboxMessage.where.not(last_published_at: nil).count}
-  unsent count #{Isometric::OutboxMessage.where(last_published_at: nil).count}
-
-  Last Unsent Headers
-  #{Isometric::OutboxMessage.where(last_published_at: nil).last&.headers}
-  " ''
-end

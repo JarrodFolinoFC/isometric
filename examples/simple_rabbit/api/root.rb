@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require_relative 'sporting_event_api'
+require_relative 'person_api'
 require 'grape-swagger'
 require 'grape'
 
 module API
   class Root < Grape::API
     format :json
-    mount API::SportingEvent
+    mount API::Person
     add_swagger_documentation hide_documentation_path: true,
                               api_version: 'v1',
                               info: {
                                 title: 'API',
-                                description: 'Demo app'
+                                description: 'Person demo app'
                               }
   end
 end

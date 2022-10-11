@@ -2,5 +2,5 @@
 
 require 'json'
 
-class SportingEvent < ActiveRecord::Base
+class Person < ActiveRecord::Base
 end

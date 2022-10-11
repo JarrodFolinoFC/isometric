@@ -1,9 +1,10 @@
 # Iso todos
 ## V1
 
+* Everything from json schema
 * e2e regression test with rest
+* More abstraction
 * DB queue version
-* github actions
 * add citations
 * discovery rake task
 * final overmind file
@@ -13,7 +14,8 @@
 
 * project generator V1
   * person 
-    * name
+    * first_name
+    * surname
   * UK address
 
 ## V2
