@@ -19,7 +19,7 @@ module Isometric
     def publish
       evaluated_hash = Isometric::Config.evaluate_hash(@settings)
       payload = yield
-      payload = payload.to_json unless payload.class == String
+      payload = payload.to_json unless payload.instance_of?(String)
       exchange.publish(payload, evaluated_hash)
       nil
     end

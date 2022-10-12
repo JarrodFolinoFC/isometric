@@ -9,7 +9,8 @@ module Isometric
       isometric_config = Isometric::Config.instance[isometric_lookup]
       Isometric::OutboxPoller.new(
         isometric_config['db_model'] || db_model || DEFAULT_DB_MODEL,
-        isometric_config['publisher_factory'] || publisher_factory&.new(queue) || DEFAULT_PUBLISHER.instance(queue))
+        isometric_config['publisher_factory'] || publisher_factory&.new(queue) || DEFAULT_PUBLISHER.instance(queue)
+      )
     end
   end
 end

@@ -15,31 +15,17 @@ require_relative '../models/person'
 Isometric::DbConnection.from_convention
 Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'http://localhost:4567')
 SCHEMAS = Isometric::SchemaSummary.from_convention("#{__dir__}/../schemas")
+UUID_FIELD = 'uuid'
 
 module API
-  class Person < Grape::API
+  class PersonWrite < Grape::API
     QUEUE_CONFIG_REFERENCE = Isometric::Config.instance['person_queues']
 
     version 'v1', using: :header, vendor: 'acme'
     format :json
     prefix :api
 
-    desc 'Return all sporting events.'
-    get :persons do
-      ::Person.limit(20)
-    end
-
     resource :person do
-      desc 'Return a person.'
-      params do
-        requires :uuid, type: String, desc: 'UUID.'
-      end
-      route_param :uuid do
-        get do
-          ::Person.find_by(uuid: params[:uuid])
-        end
-      end
-
       desc 'Create a person.'
       params do
         [
