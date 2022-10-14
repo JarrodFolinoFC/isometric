@@ -2,49 +2,46 @@
 
 module Isometric
   class SchemaSummary
-    def initialize
-      @schemas = {}
+    def initialize(schema)
+      @schema = schema
     end
 
-    def add(schema)
-      @schemas[schema['$id']] = schema
+    def type(field)
+      @schema.dig('properties', field, 'type')
     end
 
-    def self.grape_format()
-
+    def title
+      @schema.dig('title')
     end
 
-    def self.from_convention(schema_dir)
-      return if @schemas
-
-      @schema_summary ||= Isometric::SchemaSummary.new
-      schemas = Dir[schema_dir]
-      schemas.each do |schema|
-        json_parse = JSON.parse(File.open(schema).read)
-        @schema_summary.add(json_parse)
-
-        define_method("#{json_parse['title'].downcase}_schema") do
-          @schemas[json_parse['$id']]
-        end
-
-        define_method("#{json_parse['title'].downcase}_schema_required_fields") do
-          json_parse = @schemas[json_parse['$id']]
-          json_parse['required']
-        end
-
-        define_method("#{json_parse['title'].downcase}_schema_fields") do
-          json_parse = @schemas[json_parse['$id']]
-          json_parse['properties'].keys
-        end
-
-        define_method("#{json_parse['title'].downcase}_schema_optional_fields") do
-          json_parse = @schemas[json_parse['$id']]
-          json_parse['properties'].keys - json_parse['required']
-        end
-      end
-      @schema_summary
+    def details(field)
+      data = @schema.dig('properties', field)
+      {name: field, type: ruby_type_mapping(data['type']), description: data['description']}
     end
 
-    attr_reader :schemas
+    def description(field)
+      @schema.dig('properties', field, 'description')
+    end
+
+    def required_fields
+      @schema.dig('required')
+    end
+
+    def optional_fields
+      fields - required_fields
+    end
+
+    def fields
+      @schema.dig('properties').keys
+    end
+
+    def ruby_type_mapping(type)
+      {'string' => String }[type]
+    end
+
+    def self.from_convention(schema_file)
+      schema = File.open(schema_file).read
+      Isometric::SchemaSummary.new(JSON.parse(schema))
+    end
   end
 end

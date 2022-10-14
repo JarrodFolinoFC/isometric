@@ -1,15 +1,16 @@
 # Iso todos
 ## V1
 
-* Everything from json schema
-* More abstraction
+* Get type and description from json schema
+* Support 6 types ("null", "boolean", "object", "array", "number", or "string") from json schema
 * add citations
+* centralize rabbit config
 * Bunny config everything http://rubybunny.info/articles/connecting.html
-* e2e regression test with rest
 * DB queue version
+* e2e regression test with rest
 * discovery rake task
 * final overmind file
-* centralize rabbit config
+* More abstraction
 * more logging
 * exception manager
 

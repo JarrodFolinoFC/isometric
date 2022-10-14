@@ -7,13 +7,12 @@ Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'ht
 
 module API
   class PersonRead < Grape::API
-
     version PersonApiSharedConfig::VERSION, using: :header, vendor: PersonApiSharedConfig::VENDOR
     format :json
     prefix :api
 
     desc "Return all #{PersonApiSharedConfig::FRIENDLY_NAME}s."
-    get PersonApiSharedConfig::FRIENDLY_NAME + 's' do
+    get "#{PersonApiSharedConfig::FRIENDLY_NAME}s" do
       PersonApiSharedConfig::SCHEMA_CLASS.limit(20)
     end
 

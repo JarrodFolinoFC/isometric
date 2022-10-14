@@ -7,21 +7,20 @@ Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'ht
 
 module API
   class PersonWrite < Grape::API
-    version PersonApiSharedConfig::VERSION, using: :header, vendor: PersonApiSharedConfig::VENDOR
+    version SC::VERSION, using: :header, vendor: SC::VENDOR
     format :json
     prefix :api
 
     resource :person do
       desc 'Create a person.'
       params do
-        PersonApiSharedConfig::SCHEMA.person_schema_required_fields.map do |n|
-          { name: n, type: String, desc: '' }
-        end.each do |e|
-          requires(e[:name], type: e[:type], desc: e[:desc])
+        SC::SCHEMA.required_fields.each do |field|
+          details = SC::SCHEMA.details(field)
+          requires(details[:name], type: details[:type], desc: details[:description])
         end
       end
       post do
-        queue_name = PersonApiSharedConfig::QUEUE_CONFIG_REFERENCE[:create]
+        queue_name = SC::QUEUE_CONFIG_REFERENCE[:create]
         corr_id = ::Isometric::PublisherFactory.from_convention(
           queue_name: queue_name
         ).publish do
@@ -32,34 +31,34 @@ module API
 
       desc 'Update a person.'
       params do
-        [{ name: PersonApiSharedConfig::UUID_FIELD, type: String, desc: '' }].each do |e|
-          requires PersonApiSharedConfig::UUID_FIELD, type: String, desc: PersonApiSharedConfig::UUID_FIELD
-        end
-        ([PersonApiSharedConfig::SCHEMA.person_schema_fields] - [PersonApiSharedConfig::UUID_FIELD]).map do |n|
-          { name: n, type: String, desc: '' }
-        end.each do |e|
-          optional(e[:name], type: e[:type], desc: e[:desc])
+        details = SC::SCHEMA.details(SC::UUID_FIELD)
+        requires(details[:name], type: details[:type], desc: details[:description])
+
+        ([SC::SCHEMA.fields] - [SC::UUID_FIELD]).each do |_field|
+          details = SC::SCHEMA.details(SC::UUID_FIELD)
+          optional(details[:name], type: details[:type], desc: details[:description])
         end
       end
       put do
-        queue_name = PersonApiSharedConfig::QUEUE_CONFIG_REFERENCE[:update]
+        queue_name = SC::QUEUE_CONFIG_REFERENCE[:update]
         corr_id = Isometric::PublisherFactory.from_convention(queue_name: queue_name).publish do
-          { uuid: params[PersonApiSharedConfig::UUID_FIELD], first_name: params[:first_name], last_name: params[:last_name] }
+          { uuid: params[SC::UUID_FIELD], first_name: params[:first_name], last_name: params[:last_name] }
         end
         Isometric::Response.render_response(corr_id)
       end
 
       desc 'Delete a person.'
       params do
-        [{ name: PersonApiSharedConfig::UUID_FIELD, type: String, desc: '' }].each do |e|
-          requires(e[:name], type: e[:type], desc: e[:desc])
-        end
+        details = SC::SCHEMA.details(SC::UUID_FIELD.to_s)
+        requires(details[:name], type: details[:type], desc: details[:description])
       end
       post ':uuid' do
-        queue_name = PersonApiSharedConfig::QUEUE_CONFIG_REFERENCE[:delete]
+        queue_name = SC::QUEUE_CONFIG_REFERENCE[:delete]
         factory = Isometric::PublisherFactory.from_convention(queue_name: queue_name)
-        corr_id = factory.publish { { uuid: params[PersonApiSharedConfig::UUID_FIELD] } }
-        Isometric::Response.render_response(corr_id)
+
+        Isometric::Response.render_response(factory.publish do
+          { uuid: params[SC::UUID_FIELD] }
+        end)
       end
     end
   end
