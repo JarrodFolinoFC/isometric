@@ -2,10 +2,11 @@
 ## V1
 
 * Everything from json schema
-* e2e regression test with rest
 * More abstraction
-* DB queue version
 * add citations
+* Bunny config everything http://rubybunny.info/articles/connecting.html
+* e2e regression test with rest
+* DB queue version
 * discovery rake task
 * final overmind file
 * centralize rabbit config

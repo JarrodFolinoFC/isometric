@@ -10,6 +10,10 @@ module Isometric
       @schemas[schema['$id']] = schema
     end
 
+    def self.grape_format()
+
+    end
+
     def self.from_convention(schema_dir)
       return if @schemas
 

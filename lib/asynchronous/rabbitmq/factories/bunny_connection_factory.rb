@@ -15,7 +15,7 @@ module Isometric
     "#{password || config[:password]}" \
     "@#{server || config[:server]}" \
     "/#{vhost || config[:vhost]}"
-      bunny = Bunny.new(cs)
+      bunny = Bunny.new(cs, { log_level: :error })
       @connections << bunny
       bunny
     end

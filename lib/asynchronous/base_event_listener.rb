@@ -7,8 +7,9 @@ module Isometric
     def initialize(queue, settings = nil)
       @queue = queue
       @settings = settings
-      @after_hooks = @settings[:after_hooks]
-      @before_hooks = @settings[:before_hooks]
+      @before_hooks = @settings[:before_hooks] # post reply
+      @exception_hooks = @settings[:exception_hooks] # log to exception reporter, saga rollback
+      @after_hooks = @settings[:after_hooks] # idempotent handler, saga chain
     end
 
     def call

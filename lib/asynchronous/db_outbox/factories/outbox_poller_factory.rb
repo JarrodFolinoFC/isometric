@@ -12,5 +12,10 @@ module Isometric
         isometric_config['publisher_factory'] || publisher_factory&.new(queue) || DEFAULT_PUBLISHER.instance(queue)
       )
     end
+
+    def self.from_convention
+      instance(isometric_lookup: nil, db_model: DEFAULT_DB_MODEL,
+               publisher_factory: DEFAULT_PUBLISHER)
+    end
   end
 end
