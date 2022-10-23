@@ -1,0 +1,11 @@
+export PERSON_BUNNY_CONNECTION_USER=bcbxmqoc
+export PERSON_BUNNY_CONNECTION_PASSWORD=vVY06l9UE0lng3M3z74GB6wEUmEwKley
+export PERSON_BUNNY_CONNECTION_SERVER=rattlesnake-01.rmq.cloudamqp.com
+export PERSON_BUNNY_CONNECTION_VHOST=bcbxmqoc
+
+export PERSON_DB_ADAPTER=postgresql
+export PERSON_DB_HOST=tyke.db.elephantsql.com
+export PERSON_DB_USERNAME=tnemxqdp
+export PERSON_DB_PASSWORD=DZVSYk6jNbXenJrVVhHHfhVRXk1KySbk
+export PERSON_DB_DATABASE=tnemxqdp
+

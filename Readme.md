@@ -1,24 +1,36 @@
 # Iso todos
 ## V1
 
-* Get type and description from json schema
-* Support 6 types ("null", "boolean", "object", "array", "number", or "string") from json schema
-* add citations
-* centralize rabbit config
+* Finish address api specs
+* Fix Procfile
+* REST e2e spec
+* more logging
 * Bunny config everything http://rubybunny.info/articles/connecting.html
-* DB queue version
+* Fix up citations
+* Nested JSON schema
+
+* GraphQL
+* DDD based on JSON Schema
+* SINGLE RESPONSIBILITY PRINCIPLE
+* Asynchronous messaging, 
+* Transaction log tailing, 
+* centralize rabbit config
 * e2e regression test with rest
 * discovery rake task
 * final overmind file
 * More abstraction
-* more logging
 * exception manager
+* bunny in memory mock
+
+* add citations
+* Test 6 types ("null", "boolean", "object", "array", "number", or "string") from json schema
 
 * project generator V1
   * person 
     * first_name
     * surname
   * UK address
+  * pets (dog, cat, fish, turtle)
 
 ## V2
 * strong etags: https://gemdocs.org/gems/grape-app/0.10.1/Grape/App/Helpers/Caching.html
@@ -27,6 +39,14 @@
 * code generators
 * proper cli https://github.com/rails/thor/wiki 
 * jwt
+* circuit breaker
+* 12 factor app
+* Event based, not document or command
+* Rabbit fanout
+* Message deduper
+* Message idempotent hook
+* reply channel
+* Orchestration based sagas -> State Machine
 
 
 

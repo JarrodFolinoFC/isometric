@@ -8,7 +8,7 @@
   asynchronous/db_outbox/factories/outbox_publisher_factory
   asynchronous/db_outbox/factories/outbox_poller_factory
   asynchronous/db_outbox/hooks/db_confirmation.rb
-  asynchronous/db_outbox/outbox_poller
+  asynchronous/db_outbox/base_outbox_poller
   asynchronous/db_outbox/outbox_publisher
 
   asynchronous/base_event_listener

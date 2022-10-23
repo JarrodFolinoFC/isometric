@@ -3,7 +3,8 @@
 module Isometric
   module RabbitHooks
     PUBLISH_CONFIRMATION = proc do |_delivery_info, properties, _body|
-      PublisherFactory.instance(properties[:reply_to], 'rabbit/reply_to/publish_attributes').publish do
+      PublisherFactory.instance(queue_name: properties[:reply_to],
+                                isometric_lookup: 'rabbit/reply_to/publish_attributes').publish do
         {
           correlation_id: properties[:correlation_id],
           application_name: 'App Name',

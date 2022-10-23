@@ -1,0 +1,13 @@
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'spec/citations/citation_spec.rb'
+
+Metrics/BlockLength:
+  Max: 57
+
+Style/MixinUsage:
+  Exclude:
+    - 'example_cluster/address_via_db_queue_postgres/spec/spec_helper.rb'
+
+Layout/LineLength:
+  Max: 122

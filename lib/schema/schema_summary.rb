@@ -11,12 +11,12 @@ module Isometric
     end
 
     def title
-      @schema.dig('title')
+      @schema['title']
     end
 
     def details(field)
       data = @schema.dig('properties', field)
-      {name: field, type: ruby_type_mapping(data['type']), description: data['description']}
+      { name: field, type: ruby_type_mapping(data['type']), description: data['description'] }
     end
 
     def description(field)
@@ -24,7 +24,7 @@ module Isometric
     end
 
     def required_fields
-      @schema.dig('required')
+      @schema['required']
     end
 
     def optional_fields
@@ -32,11 +32,18 @@ module Isometric
     end
 
     def fields
-      @schema.dig('properties').keys
+      @schema['properties'].keys
     end
 
     def ruby_type_mapping(type)
-      {'string' => String }[type]
+      {
+        'null' => ::NilClass,
+        'object' => ::Hash,
+        'array' => ::Array,
+        'number' => ::Numeric,
+        'boolean' => ::Grape::API::Boolean,
+        'string' => ::String
+      }[type]
     end
 
     def self.from_convention(schema_file)

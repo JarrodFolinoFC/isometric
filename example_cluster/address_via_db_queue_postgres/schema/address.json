@@ -1,0 +1,29 @@
+{
+  "$id": "https://example.com/address.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Address",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Unique Identifier"
+    },
+    "attn": {
+      "type": "string",
+      "description": "The ATTN."
+    },
+    "street": {
+      "type": "string",
+      "description": "The street."
+    },
+    "borough": {
+      "type": "string",
+      "description": "The borough"
+    },
+    "postcode": {
+      "type": "string",
+      "description": "The postcode"
+    }
+  },
+  "required": ["attn", "street", "borough", "postcode"]
+}

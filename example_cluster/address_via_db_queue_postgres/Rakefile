@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+require 'rake'
+require '../../lib/isometric'
+
+require_relative 'models/address'
+
+Dir['config/*.rb'].each { |file| require_relative file }
+
+namespace :db do
+  desc 'DB Connect'
+  task :connect do
+    require_relative 'config/db'
+    Isometric::DbConnection.from_convention
+  end
+
+  desc 'Migrate DB'
+  task migrate: 'db:connect' do
+    require_relative 'db/migrate/migration_one'
+    require_relative 'db/migrate/db_outbox'
+  end
+end

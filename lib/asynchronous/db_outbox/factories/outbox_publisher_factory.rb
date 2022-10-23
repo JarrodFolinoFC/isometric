@@ -2,10 +2,19 @@
 
 module Isometric
   module OutboxPublisherFactory
-    def self.instance(queue_name:, isometric_lookup: nil, settings: {})
-      config = Isometric::Config.instance[isometric_lookup] || {}
-      @instances = {} if @instances.nil?
-      @instances[queue_name] ||= Isometric::OutboxPublisher.new(queue_name, config[:settings].merge(settings))
+    def self.from_convention(lookup_key: nil)
+      config = Isometric::Config.instance[lookup_key || ::Isometric::DEFAULT_DB_OUTBOX_PUBLISH_KEY]
+      instance(queue_name: config[:queue_name],
+               outbox_model: config[:outbox_model],
+               model: config[:model],
+               settings: config['settings'])
+    end
+
+    def self.instance(queue_name:, model:, outbox_model:, settings:)
+      Isometric::OutboxPublisher.new(queue_name: queue_name,
+                                     outbox_model: outbox_model,
+                                     model: model,
+                                     settings: settings)
     end
   end
 end
