@@ -12,6 +12,11 @@ module Isometric
       @version = version
     end
 
+    def load
+      load_configs
+      load_schema
+    end
+
     def load_configs
       @config_files.each do |file|
         require_relative file
@@ -20,6 +25,10 @@ module Isometric
 
     def load_schema
       @schema = Isometric::SchemaSummary.from_convention(@schema_file)
+    end
+
+    def connect_db
+      Isometric::DbConnection.from_convention
     end
 
     def friendly_name

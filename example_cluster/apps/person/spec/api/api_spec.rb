@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require_relative '../spec_helper'
 
 require_relative '../../config/queues'
 require_relative '../../listeners/person/created'
@@ -14,6 +14,9 @@ def listener_af(listener, channel)
 end
 
 RSpec.describe 'simple flow' do
+  include FactoryBot::Syntax::Methods
+  include Rack::Test::Methods
+
   let(:params) do
     create(:person)
   end

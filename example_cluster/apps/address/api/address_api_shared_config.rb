@@ -4,15 +4,15 @@ require 'grape'
 require_relative '../models/address'
 require_relative '../../../../lib/isometric'
 
+configs = %w[db redis logger].map { |file|
+  "#{__dir__}/../config/#{file}"
+} + ["#{__dir__}/../../../shared/config/address/db_publish_attributes"]
+
 GLOBAL_SC = Isometric::ApiConfigManager.new(
-  config_files: %w[db db_publish_attributes redis logger].map { |file|
-    "#{__dir__}/../config/#{file}"
-  },
+  config_files: configs,
   schema_file: "#{__dir__}/../schema/address.json", uuid: 'uuid',
   schema_class: ::Address, vendor: 'acme', version: 'v1'
 )
 
-GLOBAL_SC.load_configs
-GLOBAL_SC.load_schema
-
-Isometric::DbConnection.from_convention
+GLOBAL_SC.load
+GLOBAL_SC.connect_db

@@ -7,24 +7,24 @@ Isometric::Discovery::RegistryFactory.instance.set('app/person_rest_server', 'ht
 
 module API
   class PersonQueries < Grape::API
-    version SC::VERSION, using: :header, vendor: SC::VENDOR
+    version GLOBAL_SC.version, using: :header, vendor: GLOBAL_SC.vendor
     format :json
     prefix :api
 
-    desc "Return all #{SC::FRIENDLY_NAME}s."
-    get "#{SC::FRIENDLY_NAME}s" do
-      SC::SCHEMA_CLASS.limit(20)
+    desc "Return all #{GLOBAL_SC.friendly_name}s."
+    get "#{GLOBAL_SC.friendly_name}s" do
+      GLOBAL_SC.schema_class.limit(20)
     end
 
-    resource SC::FRIENDLY_NAME do
-      desc "Return a #{SC::FRIENDLY_NAME}."
+    resource GLOBAL_SC.friendly_name do
+      desc "Return a #{GLOBAL_SC.friendly_name}."
       params do
-        details = SC::SCHEMA.details(SC::UUID_FIELD.to_s)
+        details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid.to_s)
         requires(details[:name], type: details[:type], desc: details[:description])
       end
-      route_param SC::UUID_FIELD do
+      route_param GLOBAL_SC.uuid do
         get do
-          SC::SCHEMA_CLASS.find_by(uuid: params[SC::UUID_FIELD])
+          GLOBAL_SC.schema_class.find_by(uuid: params[GLOBAL_SC.uuid])
         end
       end
     end

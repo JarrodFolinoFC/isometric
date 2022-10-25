@@ -17,6 +17,7 @@ rescue StandardError
 end
 
 RSpec.describe 'simple flow' do
+  include FactoryBot::Syntax::Methods
   include Rack::Test::Methods
 
   let(:params) { create(:address) }
