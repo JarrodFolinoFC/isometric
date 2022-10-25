@@ -2,7 +2,7 @@
 
 require 'securerandom'
 
-Isometric::Config.instance.set_config('default/db/publish_attributes') do
+Isometric::Config.instance.set_config('default/rabbit/publish_attributes') do
   message_id { SecureRandom.hex }
   correlation_id { SecureRandom.hex }
   # user_id 123

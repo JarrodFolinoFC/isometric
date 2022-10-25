@@ -4,9 +4,9 @@ require 'grape'
 require_relative '../models/person'
 require_relative '../../../../lib/isometric'
 
-configs = %w[db bunny redis logger queues].map { |file|
+configs = %w[db bunny default_rabbit_publish_attributes redis logger queues].map { |file|
   "#{__dir__}/../config/#{file}"
-} + ["#{__dir__}/../../../shared/config/person/default_publish_attributes"]
+}
 
 GLOBAL_SC = Isometric::ApiConfigManager.new(
   config_files: configs,
