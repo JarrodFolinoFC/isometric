@@ -4,15 +4,15 @@ require_relative 'address_api_shared_config'
 
 module API
   class AddressCommands < Grape::API
-    version SC::VERSION, using: :header, vendor: SC::VENDOR
+    version GLOBAL_SC.version, using: :header, vendor: GLOBAL_SC.vendor
     format :json
     prefix :api
 
     resource :address do
       desc 'Create an address.'
       params do
-        SC::SCHEMA.required_fields.each do |field|
-          details = SC::SCHEMA.details(field)
+        GLOBAL_SC.schema.required_fields.each do |field|
+          details = GLOBAL_SC.schema.details(field)
           requires(details[:name], type: details[:type], desc: details[:description])
         end
       end
@@ -25,11 +25,11 @@ module API
 
       desc 'Update an address.'
       params do
-        details = SC::SCHEMA.details(SC::UUID_FIELD)
+        details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid)
         requires(details[:name], type: details[:type], desc: details[:description])
 
-        ([SC::SCHEMA.fields] - [SC::UUID_FIELD]).each do |_field|
-          details = SC::SCHEMA.details(SC::UUID_FIELD)
+        ([GLOBAL_SC.schema.fields] - [GLOBAL_SC.uuid]).each do |_field|
+          details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid)
           optional(details[:name], type: details[:type], desc: details[:description])
         end
       end
@@ -42,7 +42,7 @@ module API
 
       desc 'Delete an address.'
       params do
-        details = SC::SCHEMA.details(SC::UUID_FIELD.to_s)
+        details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid.to_s)
         requires(details[:name], type: details[:type], desc: details[:description])
       end
       post ':uuid' do

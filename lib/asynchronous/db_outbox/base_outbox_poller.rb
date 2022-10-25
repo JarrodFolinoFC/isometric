@@ -8,6 +8,8 @@ require 'time'
 
 module Isometric
   class BaseOutboxPoller
+    ::Citation.add(:polling_publisher)
+
     attr_reader :outbox_model
 
     def initialize(outbox_model: nil, selection_query: nil, settings: {})

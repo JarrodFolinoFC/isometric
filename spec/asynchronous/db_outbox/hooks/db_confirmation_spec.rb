@@ -2,5 +2,3 @@
 
 require 'spec_helper'
 
-RSpec.describe Isometric::RabbitHook::DbConfirmation do
-end

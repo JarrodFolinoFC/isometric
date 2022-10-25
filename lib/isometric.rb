@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 %w[
+  citations/citation
+  doc/citations
   active_record/active_model_helper
 
   asynchronous/db_outbox/models/outbox_acks
@@ -23,6 +25,7 @@
   asynchronous/rabbitmq/hooks
 
   config/config
+  config/api_config_manager
   config/configuration_dsl
   config/defaults
 
@@ -34,8 +37,6 @@
 
   response/response
   schema/schema_summary
-
-  citations/citation
 ].each do |lib|
   require_relative lib
 end

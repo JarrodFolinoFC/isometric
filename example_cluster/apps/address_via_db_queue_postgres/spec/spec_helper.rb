@@ -8,7 +8,7 @@ require 'timeout'
 require 'database_cleaner/active_record'
 require 'factory_bot'
 
-require_relative '../../../lib/isometric'
+require_relative '../../../../lib/isometric'
 require_relative '../api/root'
 
 include Rack::Test::Methods

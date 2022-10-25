@@ -3,6 +3,8 @@
 require 'active_record'
 module Isometric
   class OutboxMessage < ActiveRecord::Base
+    ::Citation.add(:transactional_outbox)
+
     has_many :outbox_acks
 
     def self.ack!(correlation_id, application_name, message)

@@ -4,6 +4,7 @@ require_relative 'configuration_dsl'
 
 module Isometric
   class Config
+    Citation.add(:externalized_configuration)
     def self.instance
       @instance ||= Isometric::Config.new
     end
