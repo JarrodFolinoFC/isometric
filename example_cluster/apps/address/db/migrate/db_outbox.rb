@@ -5,6 +5,7 @@ ActiveRecord::Schema.define do
     t.string :correlation_id
     t.string :queue
     t.string :model
+    t.string :app_id
     t.binary :payload
     t.binary :headers
     t.datetime :published_at

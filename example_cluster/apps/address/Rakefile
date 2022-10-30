@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rake'
-require '../../lib/isometric'
+require '../../../lib/isometric'
 
 require_relative 'models/address'
 

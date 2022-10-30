@@ -26,10 +26,10 @@ module Isometric
       loop do
         # query = outbox_model.where(last_published_at: nil).or(outbox_model.where.not('updated_at != last_published_at'))
         query = outbox_model.find_by_sql(@selection_query)
-        query.each do |model|
-          @before_hooks&.each { |hook| hook.call(model) }
-          do_process(model)
-          @after_hooks&.each { |hook| hook.call(model) }
+        query.each do |outbox_msg|
+          @before_hooks&.each { |hook| hook.call(outbox_msg) }
+          do_process(outbox_msg)
+          @after_hooks&.each { |hook| hook.call(outbox_msg) }
         end
       end
     end

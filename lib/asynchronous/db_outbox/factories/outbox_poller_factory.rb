@@ -14,7 +14,7 @@ module Isometric
     end
 
     def self.from_convention
-      instance(isometric_lookup: nil, outbox_model: DEFAULT_DB_MODEL,
+      instance(isometric_lookup: nil, db_model: DEFAULT_DB_MODEL,
                publisher_factory: DEFAULT_PUBLISHER)
     end
   end

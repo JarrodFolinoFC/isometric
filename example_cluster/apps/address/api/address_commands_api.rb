@@ -42,7 +42,7 @@ module API
 
       desc 'Delete an address.'
       params do
-        details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid.to_s)
+        details = GLOBAL_SC.schema.details(GLOBAL_SC.uuid)
         requires(details[:name], type: details[:type], desc: details[:description])
       end
       post ':uuid' do

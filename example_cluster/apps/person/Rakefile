@@ -29,6 +29,9 @@ namespace :run do
   namespace :listener do
     desc 'Run Create Person Listener'
     task create_listener: 'db:connect' do
+      Isometric::EventListenerFactory.instance(queue_name: Isometric::Config.instance['person_queues'][channel],
+                                               klass: listener,
+                                               settings: { after_hooks: [Isometric::RabbitHooks::PUBLISH_CONFIRMATION] })
     end
 
     desc 'Run Update Person Listener'

@@ -4,13 +4,17 @@ require 'spec_helper'
 
 require_relative '../../config/db'
 require_relative '../../pollers/address/created'
+require_relative '../../pollers/address/updated'
+require_relative '../../pollers/address/deleted'
 require_relative '../../models/address'
 
 def run_poller_once(queue, model)
   model.new(outbox_model: Isometric::OutboxMessage,
             selection_query: "select * from outbox_messages where queue = '#{queue}' and processed_at is null",
             settings: {
-              after_hooks: [Isometric::OutboxHooks::CLOSE]
+              after_hooks: [
+                Isometric::OutboxHooks::CONFIRMATION,
+                Isometric::OutboxHooks::CLOSE]
             }).call
 rescue StandardError
   nil
@@ -56,17 +60,35 @@ RSpec.describe 'simple flow' do
     it 'creates 1 outbox message' do
       expect(Isometric::OutboxMessage.count).to eq(1)
     end
+
+    it 'creates 1 ack' do
+      expect(Isometric::OutboxAck.count).to eq(1)
+    end
+
+    it 'creates 1 address' do
+      expect(Address.count).to eq(1)
+    end
   end
 
   describe 'PUT /api/address', type: %w[rack activerecord] do
     before do
-      address = Address.create(params)
-      put('/api/address', { 'uuid' => address.uuid, 'street' => address.street,
-                            'borough' => address.borough, 'postcode' => 'N1334' })
+      @address = Address.create(params)
+      @new_postcode = 'S1334'
+      put('/api/address', { 'uuid' => @address.uuid, 'street' => @address.street,
+                            'borough' => @address.borough, 'postcode' => @new_postcode })
+      run_poller_once('db/address/update', Listener::Address::Updated)
     end
 
     it 'creates 1 outbox message' do
       expect(Isometric::OutboxMessage.count).to eq(1)
+    end
+
+    it 'creates 1 ack' do
+      expect(Isometric::OutboxAck.count).to eq(1)
+    end
+
+    it 'updates the address' do
+      expect(@address.reload.postcode).to eq(@new_postcode)
     end
   end
 
@@ -74,10 +96,19 @@ RSpec.describe 'simple flow' do
     before do
       address = Address.create(params)
       post("/api/address/#{address.uuid}")
+      run_poller_once('db/address/delete', Listener::Address::Deleted)
     end
 
     it 'creates 1 outbox message' do
       expect(Isometric::OutboxMessage.count).to eq(1)
+    end
+
+    it 'creates 1 ack' do
+      expect(Isometric::OutboxAck.count).to eq(1)
+    end
+
+    it 'deletes 1 address' do
+      expect(Address.count).to eq(0)
     end
   end
 end

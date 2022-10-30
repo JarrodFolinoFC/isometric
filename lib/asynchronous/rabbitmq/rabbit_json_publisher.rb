@@ -31,7 +31,6 @@ module Isometric
 
     def publish_model(model)
       evaluated_hash = Isometric::Config.evaluate_hash(@settings)
-      # create_exchange(@name, @queue_name, evaluated_hash[:routing_key])
       exchange.publish(model.attributes.to_json,
                        evaluated_hash)
     end

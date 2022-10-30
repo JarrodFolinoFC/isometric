@@ -3,10 +3,11 @@
 require_relative 'models/outbox_message'
 module Isometric
   class OutboxPublisher
-    def initialize(queue_name:, model:, outbox_model:, headers: nil, settings: nil)
+    def initialize(queue_name:, model:, outbox_model:, headers: nil, settings: nil, app_id:)
       @queue_name = queue_name
       @outbox_model = outbox_model
       @model = model
+      @app_id = app_id
       @headers = headers
       @settings = settings
     end
@@ -29,10 +30,14 @@ module Isometric
         queue: @queue_name,
         payload: payload.to_json,
         headers: headers_hash.to_json,
+        app_id: @app_id,
         model: @model,
         correlation_id: settings[:correlation_id]
       )
-      settings[:correlation_id]
+      {
+        correlation_id: settings[:correlation_id],
+        uuid: @outbox_model
+      }
     end
   end
 end

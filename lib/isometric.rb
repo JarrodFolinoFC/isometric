@@ -5,8 +5,8 @@
   doc/citations
   active_record/active_model_helper
 
-  asynchronous/db_outbox/models/outbox_acks
   asynchronous/db_outbox/models/outbox_message
+  asynchronous/db_outbox/models/outbox_acks
   asynchronous/db_outbox/factories/outbox_publisher_factory
   asynchronous/db_outbox/factories/outbox_poller_factory
   asynchronous/db_outbox/hooks/db_confirmation.rb
@@ -37,6 +37,7 @@
 
   response/response
   schema/schema_summary
+  saga/saga
 ].each do |lib|
   require_relative lib
 end

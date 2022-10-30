@@ -2,11 +2,11 @@
 
 module Isometric
   module OutboxHooks
-    CONFIRMATION = proc do |_delivery_info, properties, _body|
-      DEFAULT_DB_MODEL.ack!(properties[:correlation_id], properties[:app_id], body)
+    CONFIRMATION = proc do |outbox_msg|
+      outbox_msg.class.ack!(outbox_msg.correlation_id, outbox_msg.app_id, 'success')
     end
 
-    CLOSE = proc do |_queue, _delivery_info, _properties, _body|
+    CLOSE = proc do |_outbox_msg|
       raise 'error'
     end
   end
