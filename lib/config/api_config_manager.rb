@@ -32,8 +32,7 @@ module Isometric
     end
 
     def friendly_name
-      @schema_class.to_s.downcase
+      @schema_class.to_s.split('::').last.tableize.singularize
     end
   end
 end
-

@@ -1,0 +1,43 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OutboxMessage",
+  "type": "object",
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Unique Identifier"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "The OutboxMessage."
+    },
+    "queue": {
+      "type": "string",
+      "description": "The OutboxMessage"
+    },
+    "model": {
+      "type": "string",
+      "description": "The OutboxMessage"
+    },
+    "app_id": {
+      "type": "string",
+      "description": "The OutboxMessage"
+    },
+    "payload": {
+      "type": "object",
+      "description": "The OutboxMessage"
+    },
+    "headers": {
+      "type": "object",
+      "description": "The OutboxMessage."
+    }
+  },
+  "required": [
+    "uuid",
+    "correlation_id",
+    "queue",
+    "model",
+    "payload"
+  ]
+}

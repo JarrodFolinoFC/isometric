@@ -19,6 +19,6 @@ RSpec.describe Citation do
 
   it 'adds to the encyclopedia' do
     expect(described_class.encyclopedia[:singleton][:references].first)
-      .to eq('/citation_spec.rb:10:in <class:Car>')
+      .to match('/citation_spec.rb:10:in <class:Car>')
   end
 end

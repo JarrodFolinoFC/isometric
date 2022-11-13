@@ -14,8 +14,8 @@ module Listener
         corr_id = ::Isometric::OutboxPublisherFactory
                     .from_convention(lookup_key: 'default/db/publish_attributes/create')
                     .publish { params }
-        # wait for success
-        # set address uuid
+
+
         @address_uuid = nil
       end
 
